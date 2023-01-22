@@ -58,19 +58,22 @@ crimes = st_as_sf(get_carto(query,
 # phl crime
 
 phl_gun_crime = crimes |>
-                  filter(text_general_code %in% c('Robbery Firearm', 'Aggravated Assault Firearm'))
+                  filter(text_general_code %in% c('Robbery Firearm', 'Aggravated Assault Firearm')) |>
+                  mutate(type = 'Gun')
 
 st_write(phl_gun_crime, 'phl_guncrime_2018thru22.shp')
 
 
 phl_econ_crime = crimes |>
-                  filter(grepl('Robbery|Burglary|Theft', text_general_code))
+                  filter(grepl('Robbery|Burglary|Theft', text_general_code)) |>
+                  mutate(type = 'Econ')
 
 st_write(phl_econ_crime, 'phl_econcrime_2018thru22.shp')
 
 
 phl_drug_crime = crimes |>
-                    filter(grepl('Drug', text_general_code))
+                    filter(grepl('Drug', text_general_code)) |>
+                    mutate(type = 'Drug')
 
 st_write(phl_drug_crime, 'phl_drugcrime_2018thru22.shp') 
 
@@ -106,3 +109,20 @@ ggplot(woodland_drug_crime) +
        subtitle = '2018 through 2022',
        y = 'Total Crimes',
        x = 'Year')
+
+
+
+
+
+
+all_woodland_crimes = rbind(woodland_drug_crime, woodland_gun_crime, woodland_econ_crime)
+
+ggplot(all_woodland_crimes) +
+  geom_histogram(aes(x = year, fill = type),
+                 position = 'dodge',
+                 binwidth = 0.75) +
+  labs(title = 'Crimes on Woodland Ave',
+       subtitle = '2018 through 2022',
+       y = 'Total Crimes',
+       x = 'Year',
+       fill = "Type")
