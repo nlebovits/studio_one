@@ -1,7 +1,7 @@
 woodland_palette = c('#231f20',
                       '#1c3c4a',
                       '#344a2f',
-                      '#886ea9'
+                      '#886ea9',
                       '#e02c2d',
                       '#ffb400',
                       '#d2e6ee',
