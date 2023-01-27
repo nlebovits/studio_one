@@ -79,7 +79,7 @@ font_add_google(name = "Inter", family = "inter") # add google font
 showtext_auto()
 
 theme_woodland = function(){ 
-  font = "inter"   #assign font family up front
+#  font = "inter"   #assign font family up front
   
   theme_minimal() %+replace%    #replace elements we want to change
     
@@ -96,27 +96,27 @@ theme_woodland = function(){
       
       #text elements
       plot.title = element_text(             #title
-        family = font,            #set font family
+      #  family = font,            #set font family
         size = 20,                #set font size
         hjust = 0.5,                #left align
         vjust = 1),               #raise slightly
       
       plot.subtitle = element_text(          #subtitle
-        family = font,            #font family
+       # family = font,            #font family
         size = 14,                #font size
         vjust = -0.5),            # lower slightly   
       
       plot.caption = element_text(           #caption
-        family = font,            #font family
+   #     family = font,            #font family
         size = 11,                 #font size
         hjust = 1),               #right align
       
       axis.title = element_text(             #axis titles
-        family = font,            #font family
+   #     family = font,            #font family
         size = 12),               #font size
       
       axis.text = element_text(              #axis text
-        family = font,            #axis famuly
+    #    family = font,            #axis famuly
         size = 12),                #font size
       
       axis.text.x = element_text( 
@@ -345,21 +345,21 @@ today = lubridate::ymd(Sys.Date()) |>
 
 
 # this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_all_crime_plot.pdf'), all_crime_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf')
+ggsave(paste0(today, '_all_crime_plot.pdf'), all_crime_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
 
 # this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_gun_crime_per_cap_plot.pdf'), gun_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf')
+ggsave(paste0(today, '_gun_crime_per_cap_plot.pdf'), gun_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
 
 # this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_econ_crime_per_cap_plot.pdf'), econ_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf')
+ggsave(paste0(today, '_econ_crime_per_cap_plot.pdf'), econ_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
 
 # this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_drug_crime_per_cap_plot.pdf'), drug_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf')
+ggsave(paste0(today, '_drug_crime_per_cap_plot.pdf'), drug_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
 
 
 
-st_write(phl_gun_crime, paste0(today, 'phl_guncrime_2018thru22.shp'))
+st_write(phl_gun_crime, paste0(today, '_phl_guncrime_2018thru22.shp'))
 
-st_write(phl_econ_crime, paste0(today,'phl_econcrime_2018thru22.shp'))
+st_write(phl_econ_crime, paste0(today,'_phl_econcrime_2018thru22.shp'))
 
-st_write(phl_drug_crime, paste0(today,'phl_drugcrime_2018thru22.shp'))
+st_write(phl_drug_crime, paste0(today,'_phl_drugcrime_2018thru22.shp'))
