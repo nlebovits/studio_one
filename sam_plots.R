@@ -1,7 +1,8 @@
 library(tidyverse)
 library(janitor)
+library(monochromeR)
 
-setwd("C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one")
+setwd("C:/Users/Nissim/Desktop/Spring 2023/Studio")
 
 #----------------------------------------------------------Define Plots---------------------------------------------------------#
 
@@ -9,49 +10,12 @@ setwd("C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one")
 ## set plot options
 
 # define color palette
-woodland_palette_full = c('#231f20',
-                                   '#1c3c4a',
-                                   '#344a2f',
-                                   '#886ea9',
-                                   '#e02c2d',
-                                   '#ffb400',
-                                   '#d2e6ee',
-                                   '#efefef',
-                                   '#e4eee6',
-                                   '#e8e8e8',
-                                   '#ecdace',
-                                   '#fff3d6',
-                                   '#9bc6d9',
-                                   '#c2c2c2',
-                                   '#a9aa7e',
-                                   '#d5cce1',
-                                   '#c79191',
-                                   '#ffe099'
-)
+grey_pal = generate_palette('darkgrey', 'go_lighter', n_colours = 8, view_palette = T)
 
-# define color palette
-woodland_palette_dark = c('#231f20',
-                                   '#1c3c4a',
-                                   '#344a2f',
-                                   '#886ea9',
-                                   '#e02c2d',
-                                   '#ffb400'
-)
 
-# define color palette
-woodland_palette_light = c('#d2e6ee',
-                                    '#efefef',
-                                    '#e4eee6',
-                                    '#e8e8e8',
-                                    '#ecdace',
-                                    '#fff3d6',
-                                    '#9bc6d9',
-                                    '#c2c2c2',
-                                    '#a9aa7e',
-                                    '#d5cce1',
-                                    '#c79191',
-                                    '#ffe099'
-)
+race_pal = c(c('#1c3c4a', '#ffb400', '#344a2f'), 
+             grey_pal[seq(2, length(grey_pal), by = 2)]) # prints every second element in the grey_pal list in order to emphasize color differences
+
 
 
 
@@ -61,8 +25,12 @@ theme_woodland <- function() {
     theme(
       
       # grid elements
-      axis.line = element_line(linewidth = 1, lineend = 'round'), 
+      axis.line.x = element_line(linewidth = 1, lineend = 'round'), 
+      axis.line.y = element_blank(), 
       axis.ticks = element_blank(), # strip axis ticks
+      panel.grid.major.x = element_blank(),
+      panel.grid.major.y = element_line(linewidth = 0.5, lineend = "round",
+                                        color = 'darkgrey'),
       
       # since theme_minimal() already strips axis lines,
       # we don't need to do that again
@@ -88,6 +56,8 @@ theme_woodland <- function() {
         size = 12
       ), # font size
       
+      axis.title.y = element_text(angle = 90),
+      
       axis.text = element_text( # axis text
         size = 12
       ), # font size
@@ -97,7 +67,8 @@ theme_woodland <- function() {
       ), # margin for axis text
       
       axis.text.y = element_text(
-        hjust = -0.5
+        hjust = -0.5,
+        vjust = -0.5
       ),
       aspect.ratio = 1 # make plot square
     )
@@ -106,15 +77,15 @@ theme_woodland <- function() {
 
 #----------------------------------------------------------Define Plots---------------------------------------------------------#
 
-pop_race <- read.csv('./Existing_Conditions_Population_1970_2010.csv') |>
-              filter(X != 'Statistics')
+pop_race <- read.csv('./Existing_Conditions_Population_1970_2020.csv') |>
+  filter(X != 'Statistics')
 
 pop_race = t(pop_race) |>
-              row_to_names(row_number = 1) |>
-              as.data.frame() |>
-              clean_names()
+  row_to_names(row_number = 1) |>
+  as.data.frame() |>
+  clean_names()
 
-pop_race$year = c(1970, 1980, 1990, 2000, 2010)
+pop_race$year = c(1970, 1980, 1990, 2000, 2010, 2020)
 
 rownames(pop_race) <- NULL
 
@@ -123,53 +94,51 @@ pop_race[pop_race == ''] <- 0
 pop_race = map_df(pop_race, as.numeric) 
 
 pop_race <- pop_race |>
-              select(-total_population) |>
-              pivot_longer(c('white_alone', 
-                             'black_or_african_american_alone', 
-                             'some_other_race', 
-                             'american_indian_and_alaska_native_alone', 
-                             'asian_alone', 
-                             'native_hawaiian_and_other_pacific_islander_alone',
-                             'two_or_more_races'),
-                           names_to = 'race',
-                           values_to = 'count') |>
-             mutate(race = case_when(
-                                      race == 'white_alone' ~ 'White Alone',
-                                      race == 'black_or_african_american_alone' ~ 'Black or African American Alone',
-                                      race ==  'some_other_race' ~ 'Some Other Race',
-                                      race ==  'american_indian_and_alaska_native_alone' ~ 'American Indian and Alaska Native Alone',
-                                      race ==  'asian_alone' ~ 'Asian Alone',
-                                      race ==  'native_hawaiian_and_other_pacific_islander_alone' ~ 'Native Hawaiian and Other Pacific Islander Alone',
-                                      TRUE ~ "Two or More Races"
-             ))
+  select(-total_population) |>
+  pivot_longer(c('white', 
+                        'black', 
+                        'some_other_race', 
+                        'american_indian_and_alaska_native_alone', 
+                        'asian', 
+                        'hispanic',
+                        'native_hawaiian_and_other_pacific_islander_alone',
+                        'multi_race'),
+               names_to = 'race',
+               values_to = 'count') |>
+  mutate(race = case_when(
+    race == 'white' ~ 'White',
+    race == 'black' ~ 'Black',
+    race ==  'some_other_race' ~ 'Other',
+    race ==  'american_indian_and_alaska_native_alone' ~ 'Other',
+    race ==  'asian' ~ 'Asian',
+    race ==  'native_hawaiian_and_other_pacific_islander_alone' ~ 'Other',
+    race == 'hispanic' ~ 'Hispanic',
+    TRUE ~ "Other"
+  ))
+
+
+pop_race[pop_race$race == "Black" & pop_race$year == 2020, 'count'] <- 5622
 
 
 race_plot = ggplot(pop_race, aes(x = year, y = count)) +
-                  geom_line(aes(color = race)) +
-                  geom_point(aes(color = race)) +
-                  labs(
-                    title = "Woodland Avenue Pop. by Race",
-                    subtitle = '1970 to 2010',
-                    color = "Race",
-                    y = 'Total Population'
-                  ) +
-                  scale_color_manual(values = c('#344a2f',
-                                     '#886ea9',
-                                     '#1c3c4a',
-                                     '#e02c2d',
-                                     '#ffb400',
-                                     '#9bc6d9',
-                                     '#a9aa7e',
-                                     '#c79191',
-                                     '#ffe099')) +
-                  theme_woodland() +
-                  theme(
-                    axis.title.x = element_blank(),
-                    aspect.ratio = 1,
-                    panel.grid.major.x = element_blank(),
-                    panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
-                    axis.text.x = element_text(angle = 0)
-                  )
+  geom_col(aes(fill = reorder(race, count))) +
+  labs(
+    title = "Woodland Avenue Pop. by Race",
+    subtitle = 'Total Population, 1970 to 2020',
+    fill = "Race",
+  ) +
+  scale_fill_manual(values = c( "Asian" = "#344a2f",
+                                "Black" = "#ffb400",
+                                "Other" = "#D0D0D0",
+                                "White" = "#1c3c4a",
+                                'Hispanic' = "#886ea9"
+                                  
+  )) +
+  theme_woodland() +
+  theme(
+    axis.title = element_blank(),
+  )
+
 
 
 #------------Export Data-----------------#
@@ -184,4 +153,4 @@ plots = list(race_plot)
 plot_names = paste0(today, c('_race_plot.pdf'))
 
 # this line saves the plot as a pdf with the proper formatting based on today's date
-purrr::map2(plots, plot_names, ~ ggsave(.y, .x, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent'))
+purrr::map2(plots, plot_names, ~ ggsave(.y, .x, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/other_data_viz', device = 'pdf', bg = 'transparent'))

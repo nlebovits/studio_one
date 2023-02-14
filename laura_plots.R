@@ -109,10 +109,10 @@ theme_woodland <- function() {
 # median gross rent
 
 mgr = as.data.frame(rbind(
-            c(975, 'Woodland Avenue', 2011),
-            c(1026, 'Philadelphia', 2011),
-            c(962, 'Woodland Avenue', 2021),
-            c(1149, 'Philadelphia', 2021)
+  c(975, 'Woodland Avenue', 2011),
+  c(1026, 'Philadelphia', 2011),
+  c(962, 'Woodland Avenue', 2021),
+  c(1149, 'Philadelphia', 2021)
 ))
 
 colnames(mgr) <- c('median_gross_rent', 'geom', 'year')
@@ -158,11 +158,11 @@ occupancy$pct <- as.numeric(occupancy$pct)
 
 # median property value
 med_prop_val = as.data.frame(rbind(
-                                    c(100065, 'Woodland Avenue', 2011),
-                                    c(169862, 'Philadelphia', 2011),
-                                    c(67309, 'Woodland Avenue', 2021),
-                                    c(184100, 'Philadelphia', 2021)
-                                  ))
+  c(100065, 'Woodland Avenue', 2011),
+  c(169862, 'Philadelphia', 2011),
+  c(67309, 'Woodland Avenue', 2021),
+  c(184100, 'Philadelphia', 2021)
+))
 
 colnames(med_prop_val) <- c('med_val', 'geom', 'year')
 
@@ -202,23 +202,49 @@ housing_costs$count <- as.numeric(housing_costs$count)
 
 
 rent_burd <- housing_costs |>
-              filter(category == 'Rent-Burdened') |>
-              rename(rent_burd_pop = count)
+  filter(category == 'Rent-Burdened') |>
+  rename(rent_burd_pop = count)
 
 tot = housing_costs |>
-          filter(category == 'Total') |>
-          select(count) |>
-          rename(tot_pop = count)
+  filter(category == 'Total') |>
+  select(count) |>
+  rename(tot_pop = count)
 
 not_rent_burd = cbind(rent_burd, tot) |>
-                  mutate(no_burd = tot_pop - rent_burd_pop,
-                         category = 'Not Rent-Burdened') |>
-                  select(-c(rent_burd_pop, tot_pop)) |>
-                  rename(count = no_burd)
+  mutate(no_burd = tot_pop - rent_burd_pop,
+         category = 'Not Rent-Burdened') |>
+  select(-c(rent_burd_pop, tot_pop)) |>
+  rename(count = no_burd)
 
 housing_costs = rbind(housing_costs, not_rent_burd)
 
 housing_costs$income_lvl <- factor(housing_costs$income_lvl, levels = c((unique(housing_costs$income_lvl))))
+
+
+
+households_pct <- as.data.frame(rbind(
+  c("With Children", "Males", 0),
+  c("Single Householder", "Males", 64),
+  c("65+ years old", "Males", 16),
+  c("With Children", "Females", 34),
+  c("Single Householder", "Females", 45),
+  c("65+ years old", "Females", 12)
+))
+
+colnames(households_pct) <- c("type", 'gender', 'pct')
+
+households_pct$pct <- as.numeric(households_pct$pct)
+
+
+
+households_count <- as.data.frame(rbind(
+  c("Count", "Males", 822),
+  c("Count", "Females", 1527)
+))
+
+colnames(households_count) <- c("type", 'gender', 'count')
+
+households_count$count <- as.numeric(households_count$count)
 
 
 #--------------------------------PLOT--------------------------------------------------------#
@@ -226,135 +252,164 @@ housing_costs$income_lvl <- factor(housing_costs$income_lvl, levels = c((unique(
 
 
 mgr_plot = ggplot(mgr, aes(x = year, y = median_gross_rent, fill = geom)) +
-                  geom_col(position = "dodge") +
-                  labs(
-                    title = "Median Gross Rent",
-                    subtitle = '2011 to 2021',
-                    fill = "Geography",
-                    y = 'Median Rent ($)'
-                    
-                  ) +
-                #  scale_y_continuous(limits = c(400, 1200)) +
-                  scale_fill_manual(values = c(
-                    "#344a2f",
-                             "#ffb400"
-                  )) +
-                  theme_woodland() +
-                  theme(
-                    axis.title.x = element_blank(),
-                    aspect.ratio = 1,
-                    panel.grid.major.x = element_blank(),
-                    panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
-                    axis.text.x = element_text(angle = 30)
-                  )
+  geom_col(position = "dodge") +
+  labs(
+    title = "Median Gross Rent",
+    subtitle = '2011 to 2021',
+    fill = "Geography",
+    y = 'Median Rent ($)'
+    
+  ) +
+  #  scale_y_continuous(limits = c(400, 1200)) +
+  scale_fill_manual(values = c(
+    "#344a2f",
+             "#ffb400"
+  )) +
+  theme_woodland() +
+  theme(
+    axis.title.x = element_blank(),
+    aspect.ratio = 1,
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
+    axis.text.x = element_text(angle = 30)
+  )
 
 
 
 vacancy_plot = ggplot(vacancy, aes(x = year, y = vacancy_rt, fill = geom)) +
-                geom_col(position = "dodge") +
-                labs(
-                  title = "Residential Vacancy Rate",
-                  subtitle = '2011 to 2021',
-                  fill = "Geography",
-                  y = 'Vacancy Rate (%)'
-                  
-                ) +
-                #  scale_y_continuous(limits = c(400, 1200)) +
-                scale_fill_manual(values = c(
-                  "#344a2f",
-                           "#ffb400"
-                )) +
-                theme_woodland() +
-                theme(
-                  axis.title.x = element_blank(),
-                  aspect.ratio = 1,
-                  panel.grid.major.x = element_blank(),
-                  panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
-                  axis.text.x = element_text(angle = 30)
-                )
+  geom_col(position = "dodge") +
+  labs(
+    title = "Residential Vacancy Rate",
+    subtitle = '2011 to 2021',
+    fill = "Geography",
+    y = 'Vacancy Rate (%)'
+    
+  ) +
+  #  scale_y_continuous(limits = c(400, 1200)) +
+  scale_fill_manual(values = c(
+    "#344a2f",
+             "#ffb400"
+  )) +
+  theme_woodland() +
+  theme(
+    axis.title.x = element_blank(),
+    aspect.ratio = 1,
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
+    axis.text.x = element_text(angle = 30)
+  )
 
 
 occupancy_plot = ggplot(occupancy, aes(x = year, y = pct, fill = occupancy)) +
-                    geom_col(position = "stack") +
-                    facet_wrap(~geom) +
-                    labs(
-                      title = "Occupancy Type",
-                      subtitle = '2011 to 2021',
-                      fill = "Occupancy Type",
-                      y = 'Occupancy Share (5))'
-                      
-                    ) +
-                    scale_fill_manual(values = c(
-                      "#344a2f",
-                               "#ffb400"
-                    )) +
-                    theme_woodland() +
-                    theme(
-                      axis.title.x = element_blank(),
-                      aspect.ratio = 1,
-                      panel.grid.major.x = element_blank(),
-                      panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
-                      axis.text.x = element_text(angle = 30)
-                    )
+  geom_col(position = "stack") +
+  facet_wrap(~geom) +
+  labs(
+    title = "Occupancy Type",
+    subtitle = '2011 to 2021',
+    fill = "Occupancy Type",
+    y = 'Occupancy Share (5))'
+    
+  ) +
+  scale_fill_manual(values = c(
+    "#344a2f",
+             "#ffb400"
+  )) +
+  theme_woodland() +
+  theme(
+    axis.title.x = element_blank(),
+    aspect.ratio = 1,
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
+    axis.text.x = element_text(angle = 30)
+  )
 
 prop_val_plot = ggplot(med_prop_val, aes(x = year, y = med_val, fill = geom)) +
-                    geom_col(position = "dodge") +
-                    labs(
-                      title = "Median Property Value",
-                      subtitle = '2011 to 2021',
-                      fill = "Geography",
-                      y = 'Median Value ($)'
-                      
-                    ) +
-                    #  scale_y_continuous(limits = c(400, 1200)) +
-                    scale_fill_manual(values = c(
-                      "#344a2f",
-                               "#ffb400"
-                    )) +
-                    theme_woodland() +
-                    theme(
-                      axis.title.x = element_blank(),
-                      aspect.ratio = 1,
-                      panel.grid.major.x = element_blank(),
-                      panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
-                      axis.text.x = element_text(angle = 30)
-                    )
+  geom_col(position = "dodge") +
+  labs(
+    title = "Median Property Value",
+    subtitle = '2011 to 2021',
+    fill = "Geography",
+    y = 'Median Value ($)'
+    
+  ) +
+  #  scale_y_continuous(limits = c(400, 1200)) +
+  scale_fill_manual(values = c(
+    "#344a2f",
+             "#ffb400"
+  )) +
+  theme_woodland() +
+  theme(
+    axis.title.x = element_blank(),
+    aspect.ratio = 1,
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
+    axis.text.x = element_text(angle = 30)
+  )
 
 
 rent_burd_plot = ggplot((housing_costs |> filter(category != 'Total')), 
-                                aes(x = income_lvl, y = count, fill = category)) +
-                      geom_col(position = "stack") +
-                      facet_wrap(~geom, scales = 'free') +
-                      labs(
-                        title = "Rent Burden",
-                        fill = "Rent Burdened?",
-                        y = 'Occupancy Share (5))'
-                        
-                      ) +
-                      scale_fill_manual(values = c(
-                        "#344a2f",
-                                 "#ffb400"
-                      )) +
-                      theme_woodland() +
-                      theme(
-                        axis.title.x = element_blank(),
-                        aspect.ratio = 1,
-                        panel.grid.major.x = element_blank(),
-                        panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
-                        axis.text.x = element_text(angle = 30)
-                      )
+                        aes(x = income_lvl, y = count, fill = category)) +
+  geom_col(position = "stack") +
+  facet_wrap(~geom, scales = 'free') +
+  labs(
+    title = "Rent Burden",
+    fill = "Rent Burdened?",
+    y = 'Occupancy Share (5))'
+    
+  ) +
+  scale_fill_manual(values = c(
+    "#344a2f",
+             "#ffb400"
+  )) +
+  theme_woodland() +
+  theme(
+    axis.title.x = element_blank(),
+    aspect.ratio = 1,
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linewidth = 0.5, linetype = 'dashed', lineend = "round"),
+    axis.text.x = element_text(angle = 30)
+  )
+
+
+hhs_pct_plot = ggplot(households_pct, aes(x = type, y = ifelse(gender == "Males", pct, -pct), fill=gender))+  
+  geom_bar(stat="identity", position="identity") +
+  labs(title = "Household Types by Gender",
+       y = "Percent") +
+  scale_y_continuous(limits = c(-max(households_pct$pct), max(households_pct$pct))) +
+  scale_fill_manual(values = c(
+    '#d5cce1',
+             '#9bc6d9'
+  )) +
+  theme_woodland() +
+  theme(axis.title.y = element_blank()) +
+  coord_flip()
+
+
+hhs_count_plot = ggplot(households_count, aes(x = type, y = ifelse(gender == "Males", count, -count), fill=gender))+  
+  geom_bar(stat="identity", position="identity") +
+  labs(title = "Household Types by Gender",
+       y = "Total Households") +
+  scale_y_continuous(limits = c(-max(households_count$count), max(households_count$count))) +
+  scale_fill_manual(values = c(
+    '#d5cce1',
+             '#9bc6d9'
+  )) +
+  theme_woodland() +
+  theme(axis.title.y = element_blank()) +
+  coord_flip()
+
 
 
 #------------Export Data-----------------#
 
 # this chunk creates a variable for today's date and formats it properly for the file name
 today <- lubridate::ymd(Sys.Date()) |>
-                str_replace_all("-", "_")
+  str_replace_all("-", "_")
 
 # vectorize plots, concatenate names, loop through ggsave
-plots <- list(mgr_plot, vacancy_plot, occupancy_plot, prop_val_plot, rent_burd_plot)
+plots <- list(mgr_plot, vacancy_plot, occupancy_plot, prop_val_plot, rent_burd_plot, hhs_pct_plot, hhs_count_plot)
 
-plot_names <- paste0(today, c("_mgr_plot.pdf", "_vacancy_plot.pdf", "_occupancy_plot.pdf", "_prop_val_plot.pdf", "_rent_burd_plot.pdf"))
+plot_names <- paste0(today, c("_mgr_plot.pdf", "_vacancy_plot.pdf", "_occupancy_plot.pdf", "_prop_val_plot.pdf", "_rent_burd_plot.pdf", "_hhs_pct_plot.pdf", "_hhs_count_plot.pdf"))
 
 # this line saves the plot as a pdf with the proper formatting based on today's date
-purrr::map2(plots, plot_names, ~ ggsave(.y, .x, path = "C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one", device = "pdf", bg = "transparent"))
+purrr::map2(plots, plot_names, ~ ggsave(.y, .x, path = "C:/Users/Nissim/Desktop/Spring 2023/Studio/other_data_viz", device = "pdf", bg = "transparent"))

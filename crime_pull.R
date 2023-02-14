@@ -27,110 +27,98 @@ tmap_mode("view")
 
 # define color palette
 woodland_palette_full = c('#231f20',
-                              '#1c3c4a',
-                              '#344a2f',
-                              '#886ea9',
-                              '#e02c2d',
-                              '#ffb400',
-                              '#d2e6ee',
-                              '#efefef',
-                              '#e4eee6',
-                              '#e8e8e8',
-                              '#ecdace',
-                              '#fff3d6',
-                              '#9bc6d9',
-                              '#c2c2c2',
-                              '#a9aa7e',
-                              '#d5cce1',
-                              '#c79191',
-                              '#ffe099'
+                                   '#1c3c4a',
+                                   '#344a2f',
+                                   '#886ea9',
+                                   '#e02c2d',
+                                   '#ffb400',
+                                   '#d2e6ee',
+                                   '#efefef',
+                                   '#e4eee6',
+                                   '#e8e8e8',
+                                   '#ecdace',
+                                   '#fff3d6',
+                                   '#9bc6d9',
+                                   '#c2c2c2',
+                                   '#a9aa7e',
+                                   '#d5cce1',
+                                   '#c79191',
+                                   '#ffe099'
 )
 
 # define color palette
 woodland_palette_dark = c('#231f20',
-                              '#1c3c4a',
-                              '#344a2f',
-                              '#886ea9',
-                              '#e02c2d',
-                              '#ffb400'
+                                   '#1c3c4a',
+                                   '#344a2f',
+                                   '#886ea9',
+                                   '#e02c2d',
+                                   '#ffb400'
 )
 
 # define color palette
 woodland_palette_light = c('#d2e6ee',
-                              '#efefef',
-                              '#e4eee6',
-                              '#e8e8e8',
-                              '#ecdace',
-                              '#fff3d6',
-                              '#9bc6d9',
-                              '#c2c2c2',
-                              '#a9aa7e',
-                              '#d5cce1',
-                              '#c79191',
-                              '#ffe099'
-                          )
+                                    '#efefef',
+                                    '#e4eee6',
+                                    '#e8e8e8',
+                                    '#ecdace',
+                                    '#fff3d6',
+                                    '#9bc6d9',
+                                    '#c2c2c2',
+                                    '#a9aa7e',
+                                    '#d5cce1',
+                                    '#c79191',
+                                    '#ffe099'
+)
 
 
-## define plot theme
-
-font_add_google(name = "Inter", family = "inter") # add google font
-
-# turn on showtext
-showtext_auto()
-
-theme_woodland = function(){ 
-#  font = "inter"   #assign font family up front
-  
-  theme_minimal() %+replace%    #replace elements we want to change
+theme_woodland <- function() {
+  theme_classic() %+replace% # replace elements we want to change
     
     theme(
       
-      #grid elements
-      panel.grid.major.y = element_line(linetype = 'dashed'),    #strip major gridlines
-      panel.grid.major.x = element_blank(),    #strip major gridlines
-      panel.grid.minor = element_blank(),    #strip minor gridlines
-      axis.ticks = element_blank(),          #strip axis ticks
+      # grid elements
+      axis.line = element_line(linewidth = 1, lineend = 'round'), 
+      axis.ticks = element_blank(), # strip axis ticks
       
-      #since theme_minimal() already strips axis lines, 
-      #we don't need to do that again
+      # since theme_minimal() already strips axis lines,
+      # we don't need to do that again
       
-      #text elements
-      plot.title = element_text(             #title
-      #  family = font,            #set font family
-        size = 20,                #set font size
-        hjust = 0.5,                #left align
-        vjust = 1),               #raise slightly
+      # text elements
+      plot.title = element_text( # title
+        size = 20, # set font size
+        hjust = 0.5, # left align
+        vjust = 1
+      ), # raise slightly
       
-      plot.subtitle = element_text(          #subtitle
-       # family = font,            #font family
-        size = 14,                #font size
-        vjust = -0.5),            # lower slightly   
+      plot.subtitle = element_text( # subtitle
+        size = 14, # font size
+        vjust = -0.5
+      ), # lower slightly
       
-      plot.caption = element_text(           #caption
-   #     family = font,            #font family
-        size = 11,                 #font size
-        hjust = 1),               #right align
+      plot.caption = element_text( # caption
+        size = 11, # font size
+        hjust = 1
+      ), # right align
       
-      axis.title = element_text(             #axis titles
-   #     family = font,            #font family
-        size = 12),               #font size
+      axis.title = element_text( # axis titles
+        size = 12
+      ), # font size
       
-      axis.text = element_text(              #axis text
-    #    family = font,            #axis famuly
-        size = 12),                #font size
+      axis.text = element_text( # axis text
+        size = 12
+      ), # font size
       
-      axis.text.x = element_text( 
-        hjust = 0.5, # center text 
-        margin=margin(5, b = 11)), #margin for axis text
+      axis.text.x = element_text(
+        hjust = 0.5, # center text
+      ), # margin for axis text
       
       axis.text.y = element_text(
         hjust = -0.5
       ),
-      
-      aspect.ratio = 1 #make plot square
-      
+      aspect.ratio = 1 # make plot square
     )
 }
+
 
 
 
@@ -141,8 +129,8 @@ theme_woodland = function(){
 
 # import phl tracts; pull woodland ave tracts only
 woodland_tracts = tracts('PA', 'Philadelphia') |>
-                    filter(NAME %in% c(66, 63)) |>
-                    st_transform(crs = st_crs("EPSG:2272")) # project to PA South NAD 1983 US Ft
+  filter(NAME %in% c(66, 63)) |>
+  st_transform(crs = st_crs("EPSG:2272")) # project to PA South NAD 1983 US Ft
 
 tm_shape(woodland_tracts) +
   tm_polygons()
@@ -168,13 +156,13 @@ crimes = st_as_sf(get_carto(query,
                             format = 'csv',
                             base_url = base_url,
                             stringsAsFactors = FALSE) |>
-                  filter(!is.na(point_x),
-                         !is.na(point_y)),
-                        coords = c("point_x", "point_y"),
-                        crs = st_crs('EPSG:4326')) |>
-                  mutate(year = lubridate::year(dispatch_date_time)) |>
-                  filter( between (year, 2018, 2022) ) |>
-                  st_transform(crs = st_crs("EPSG:2272")) # project to PA South NAD 1983 US Ft
+                    filter(!is.na(point_x),
+                           !is.na(point_y)),
+                  coords = c("point_x", "point_y"),
+                  crs = st_crs('EPSG:4326')) |>
+  mutate(year = lubridate::year(dispatch_date_time)) |>
+  filter( between (year, 2018, 2022) ) |>
+  st_transform(crs = st_crs("EPSG:2272")) # project to PA South NAD 1983 US Ft
 
 
 
@@ -199,20 +187,20 @@ woodland_pop = sum(woodland$B01003_001E)
 ### total phl crime
 
 phl_gun_crime = crimes |>
-                  filter(text_general_code %in% c('Robbery Firearm', 'Aggravated Assault Firearm')) |>
-                  mutate(type = 'Gun')
+  filter(text_general_code %in% c('Robbery Firearm', 'Aggravated Assault Firearm')) |>
+  mutate(type = 'Gun')
 
 
 phl_econ_crime = crimes |>
-                  filter(grepl('Robbery|Burglary|Theft', text_general_code)) |>
-                  mutate(type = 'Econ')
+  filter(grepl('Robbery|Burglary|Theft', text_general_code)) |>
+  mutate(type = 'Econ')
 
 
 phl_drug_crime = crimes |>
-                    filter(grepl('Drug', text_general_code)) |>
-                    mutate(type = 'Drug')
+  filter(grepl('Drug', text_general_code)) |>
+  mutate(type = 'Drug')
 
- 
+
 
 ### woodland ave specific crime
 
@@ -224,7 +212,6 @@ woodland_drug_crime = phl_drug_crime[woodland_tracts, ]
 
 
 all_woodland_crimes = rbind(woodland_drug_crime, woodland_gun_crime, woodland_econ_crime)
-
 
 
 ### annual phl crime per capita
@@ -282,7 +269,7 @@ annual_woodland_drug_crime = woodland_drug_crime |>
 
 # combine woodland level and phl level crime for comparison
 tot_gun_crime = rbind(annual_woodland_gun_crime, annual_phl_gun_crime)
-  
+
 tot_econ_crime = rbind(annual_woodland_econ_crime, annual_phl_econ_crime)
 
 tot_drug_crime = rbind(annual_woodland_drug_crime, annual_phl_drug_crime)
@@ -293,73 +280,75 @@ tot_drug_crime = rbind(annual_woodland_drug_crime, annual_phl_drug_crime)
 windows()
 
 all_crime_plot = ggplot(all_woodland_crimes) +
-                    geom_histogram(aes(x = year, fill = type), alpha = 0.7, binwidth = 0.5) +
-                    labs(title = 'Crimes on Woodland Ave',
-                         subtitle = '2018 through 2022',
-                         fill = "Type") +
-                    scale_fill_manual(values = rev(woodland_palette_light)) +
-                    theme_woodland() +
-                    theme(axis.title.x = element_blank(),
-                          axis.title.y = element_blank())
+  geom_histogram(aes(x = year, fill = type), alpha = 1, binwidth = 0.6, position = 'dodge') +
+  labs(title = 'Crimes on Woodland Ave',
+       subtitle = '2018 through 2022',
+       fill = "Type") +
+  scale_fill_manual(values = c(
+    '#344a2f',
+             '#ffb400',
+             '#886ea9'
+             
+  )) +
+  theme_woodland() +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+all_crime_plot
 
 
 ## annual gun crimes per capita
 gun_crime_per_cap_plot = ggplot(tot_gun_crime) +
-                            geom_col(aes(x = year, y = guncrime_per_cap, fill = geom),  alpha = 0.7, position = 'dodge') +
-                            labs(title = 'Gun Crimes on Woodland Ave',
-                                 subtitle = '2018 through 2022',
-                                 y = 'Crimes per Capita',
-                                 x = 'Year',
-                                 fill = "Geography") +
-                            scale_fill_manual(values = rev(woodland_palette_light)) +
-                            theme_woodland()
+  geom_col(aes(x = year, y = guncrime_per_cap, fill = geom),  alpha = 0.7, position = 'dodge') +
+  labs(title = 'Gun Crimes on Woodland Ave',
+       subtitle = '2018 through 2022',
+       y = 'Crimes per Capita',
+       x = 'Year',
+       fill = "Geography") +
+  scale_fill_manual(values = rev(woodland_palette_light)) +
+  theme_woodland()
 
 ## annual gun crimes per capita
 econ_crime_per_cap_plot = ggplot(tot_econ_crime) +
-                            geom_col(aes(x = year, y = econcrime_per_cap, fill = geom),  alpha = 0.7, position = 'dodge') +
-                            labs(title = 'Econ Crimes on Woodland Ave',
-                                 subtitle = '2018 through 2022',
-                                 y = 'Crimes per Capita',
-                                 x = 'Year',
-                                 fill = "Geography") +
-                            scale_fill_manual(values = rev(woodland_palette_light)) +
-                            theme_woodland()
+  geom_col(aes(x = year, y = econcrime_per_cap, fill = geom),  alpha = 0.7, position = 'dodge') +
+  labs(title = 'Econ Crimes on Woodland Ave',
+       subtitle = '2018 through 2022',
+       y = 'Crimes per Capita',
+       x = 'Year',
+       fill = "Geography") +
+  scale_fill_manual(values = rev(woodland_palette_light)) +
+  theme_woodland()
 
 ## annual drug crimes per capita
 drug_crime_per_cap_plot = ggplot(tot_drug_crime) +
-                            geom_col(aes(x = year, y = drugcrime_per_cap, fill = geom),  alpha = 0.7, position = 'dodge') +
-                            labs(title = 'Drug Crimes on Woodland Ave',
-                                 subtitle = '2018 through 2022',
-                                 y = 'Crimes per Capita',
-                                 x = 'Year',
-                                 fill = "Geography") +
-                            scale_fill_manual(values = rev(woodland_palette_light)) +
-                            theme_woodland()
+  geom_col(aes(x = year, y = drugcrime_per_cap, fill = geom),  alpha = 0.7, position = 'dodge') +
+  labs(title = 'Drug Crimes on Woodland Ave',
+       subtitle = '2018 through 2022',
+       y = 'Crimes per Capita',
+       x = 'Year',
+       fill = "Geography") +
+  scale_fill_manual(values = rev(woodland_palette_light)) +
+  theme_woodland()
 
 
 #------------Export Data-----------------#
 
 # this chunk creates a variable for today's date and formats it properly for the file name
 today = lubridate::ymd(Sys.Date()) |>
-                str_replace_all("-", '_')
+  str_replace_all("-", '_')
 
+# vectorize plots, concatenate names, loop through ggsave
+plots = list(all_crime_plot, gun_crime_per_cap_plot, econ_crime_per_cap_plot, drug_crime_per_cap_plot)
 
-# this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_all_crime_plot.pdf'), all_crime_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
-
-# this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_gun_crime_per_cap_plot.pdf'), gun_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
+plot_names = paste0(today, c('_all_crime_plot.pdf', '_gun_crime_per_cap_plot.pdf', '_econ_crime_per_cap_plot.pdf', '_drug_crime_per_cap_plot.pdf'))
 
 # this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_econ_crime_per_cap_plot.pdf'), econ_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
-
-# this line saves the plot as a pdf with the proper formatting based on today's date
-ggsave(paste0(today, '_drug_crime_per_cap_plot.pdf'), drug_crime_per_cap_plot, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent')
+purrr::map2(plots, plot_names, ~ ggsave(.y, .x, path = 'C:/Users/Nissim/Desktop/Spring 2023/Studio/studio_one', device = 'pdf', bg = 'transparent'))
 
 
 
-st_write(phl_gun_crime, paste0(today, '_phl_guncrime_2018thru22.shp'))
+# vectorize data for shapefiles; save
+shp_files = list(phl_gun_crime, phl_econ_crime, phl_drug_crime)
 
-st_write(phl_econ_crime, paste0(today,'_phl_econcrime_2018thru22.shp'))
+shp_names = paste0(today, c('_phl_guncrime_2018thru22.shp', '_phl_econcrime_2018thru22.shp', '_phl_drugcrime_2018thru22.shp'))
 
-st_write(phl_drug_crime, paste0(today,'_phl_drugcrime_2018thru22.shp'))
+map2(shp_files, shp_names, st_write)
